@@ -519,8 +519,12 @@ async def handle_cover_upload(update: Update, context: ContextTypes.DEFAULT_TYPE
         # Set cover
         success = MusicTagEditor.set_cover(filepath, bytes(image_bytes))
         
+        # Re-read tags to get updated cover status
+        tags = MusicTagEditor.get_tags(filepath)
+        cover_status = "✓ Set" if tags and tags.get("has_cover") else "✗ Not set"
+        
         if success:
-            await status_msg.edit_text("✅ Album cover updated successfully!")
+            await status_msg.edit_text(f"✅ Album cover updated successfully!\n🖼 Cover: {cover_status}")
         else:
             await status_msg.edit_text("❌ Failed to update album cover.")
         
